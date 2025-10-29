@@ -9,12 +9,11 @@ import it.unibo.collections.social.api.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This will be an implementation of
@@ -38,7 +37,7 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      *
      * think of what type of keys and values would best suit the requirements
      */
-
+    private Map<U, String> followedPeople;
     /*
      * [CONSTRUCTORS]
      *
@@ -64,13 +63,16 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      *            application
      */
     public SocialNetworkUserImpl(final String name, final String surname, final String user, final int userAge) {
-        super(null, null, null, 0);
+        super(name, surname, user, userAge);
+        this.followedPeople = new HashMap<U, String>();
     }
 
     /*
      * 2) Define a further constructor where the age defaults to -1
      */
-
+    public SocialNetworkUserImpl(final String name, final String surname, final String user) {
+        this(name, surname, user, -1);
+    }
     /*
      * [METHODS]
      *
@@ -78,7 +80,12 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      */
     @Override
     public boolean addFollowedUser(final String circle, final U user) {
-        return false;
+        if(!this.followedPeople.containsKey(user)){
+            this.followedPeople.put(user, circle);
+            return true;
+        }
+        else
+            return false;
     }
 
     /**
@@ -88,11 +95,20 @@ public final class SocialNetworkUserImpl<U extends User> extends UserImpl implem
      */
     @Override
     public Collection<U> getFollowedUsersInGroup(final String groupName) {
-        return null;
+        Set<U> ris = new TreeSet<U>();
+        if (this.followedPeople.containsValue(groupName)) {
+            for (U elem : this.followedPeople.keySet()) {
+                if(this.followedPeople.get(elem).equals(groupName))
+                    ris.add(elem);
+            }
+        }
+        return ris;
     }
 
     @Override
     public List<U> getFollowedUsers() {
-        return null;
+        List<U> ris = new ArrayList<U>();
+        ris.addAll(this.followedPeople.keySet());
+        return ris;
     }
 }
