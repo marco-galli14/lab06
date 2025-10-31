@@ -1,9 +1,9 @@
 package it.unibo.generics.graph.impl;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import it.unibo.generics.graph.api.Graph;
 import it.unibo.generics.graph.api.Node;
@@ -15,12 +15,18 @@ public class GraphImpl implements Graph<String>{
 
     public GraphImpl(final String name) {
         this.name = name;
-        this.nodeSet = new TreeSet<>();
+        this.nodeSet = new HashSet<Node>();
     }
 
     public void addNode(final String nodeName) {
         Node appoggio = new NodeImpl(nodeName);
-        if(!this.nodeSet.contains(appoggio))
+        boolean n = false;
+        for(Node elem : this.nodeSet) {
+            if(elem.equals(appoggio)) {
+                n = true;
+            }
+        }
+        if(!n)
             this.nodeSet.add(appoggio);
     }
     
@@ -40,7 +46,7 @@ public class GraphImpl implements Graph<String>{
     }
 
     public Set<String> nodeSet() {
-        Set<String> ris = new TreeSet<>();
+        Set<String> ris = new HashSet<>();
         for(Node elem : this.nodeSet) {
             ris.add(elem.getNodeName());
         }
@@ -48,7 +54,7 @@ public class GraphImpl implements Graph<String>{
     }
 
     public Set<String> linkedNodes(final String source) {
-        Set<String> ris = new TreeSet<>();
+        Set<String> ris = new HashSet<>();
         Node appoggio = null;
         for(Node e : this.nodeSet) {
             if(e.getNodeName().equals(source))
@@ -67,10 +73,12 @@ public class GraphImpl implements Graph<String>{
             if(e.getNodeName().equals(source))
                 appoggio = e;
         }
+        ris.add(source);
         while(!appoggio.getNodeList().getFirst().getNodeName().equals(target)){
             ris.add(appoggio.getNodeList().getFirst().getNodeName());
             appoggio = appoggio.getNodeList().getFirst();
         }
+        ris.add(target);
         return ris;
     }
 
